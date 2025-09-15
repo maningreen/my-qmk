@@ -1,0 +1,4 @@
+QUANTUM_LIB_SRC += i2c_master.c
+RGB_MATRIX_CUSTOM_KB = yes
+#UART_DRIVER_REQUIRED = yes
+RPI_ENABLE = yes

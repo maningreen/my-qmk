@@ -78,6 +78,9 @@ void is31fl3729_update_scaling_registers(uint8_t index);
 
 void is31fl3729_flush(void);
 
+#define IS31FL3729_PHASE_DELAY_0_DEGREE 0b0
+#define IS31FL3729_PHASE_DELAY_180_DEGREE 0b1
+
 #define IS31FL3729_SW_PULLDOWN_0_OHM 0b000
 #define IS31FL3729_SW_PULLDOWN_0K5_OHM_SW_OFF 0b001
 #define IS31FL3729_SW_PULLDOWN_1K_OHM_SW_OFF 0b010

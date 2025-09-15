@@ -116,6 +116,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifdef VIAL_ENABLE
 #   include "vial.h"
 #endif
+#ifdef RPI_ENABLE
+#    include "rpi.h"
+#endif
 #if defined(CRC_ENABLE)
 #    include "crc.h"
 #endif
@@ -552,6 +555,9 @@ void keyboard_init(void) {
 #endif
 #ifdef HAPTIC_ENABLE
     haptic_init();
+#endif
+#ifdef RPI_ENABLE
+    rpi_init();
 #endif
 
 #if defined(DEBUG_MATRIX_SCAN_RATE) && defined(CONSOLE_ENABLE)

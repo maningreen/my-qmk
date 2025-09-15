@@ -58,7 +58,10 @@ bool TYPING_HEATMAP(effect_params_t* params) {
     RGB_MATRIX_USE_LIMITS(led_min, led_max);
 
     if (params->init) {
-        rgb_matrix_set_color_all(0, 0, 0);
+        for (uint8_t i = led_min; i < led_max; i++) {
+            RGB_MATRIX_TEST_LED_FLAGS();
+            rgb_matrix_set_color(i, 0, 0, 0);
+        }
         memset(g_rgb_frame_buffer, 0, sizeof g_rgb_frame_buffer);
     }
 

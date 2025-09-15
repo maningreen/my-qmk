@@ -39,6 +39,10 @@
 #    include "connection.h"
 #endif // CONNECTION_ENABLE
 
+#ifdef RPI_ENABLE
+#    include "rpi.h"
+#endif // RPI_ENABLE
+
 #ifdef VIA_ENABLE
 bool via_eeprom_is_valid(void);
 void via_eeprom_set_valid(bool valid);
@@ -157,6 +161,10 @@ void eeconfig_init_quantum(void) {
     dynamic_keymap_reset();
 #endif
 
+#if defined(RPI_ENABLE)
+    eeconfig_init_rpi();
+#endif
+
     eeconfig_init_kb();
 
 #ifdef RGB_MATRIX_ENABLE
@@ -188,6 +196,11 @@ bool eeconfig_is_enabled(void) {
         is_eeprom_enabled = via_eeprom_is_valid();
     }
 #endif // VIA_ENABLE
+#ifdef RPI_ENABLE
+    if (is_eeprom_enabled) {
+        is_eeprom_enabled = rpi_eeprom_is_valid();
+    }
+#endif // RPI_ENABLE
     return is_eeprom_enabled;
 }
 
@@ -198,6 +211,11 @@ bool eeconfig_is_disabled(void) {
         is_eeprom_disabled = !via_eeprom_is_valid();
     }
 #endif // VIA_ENABLE
+#ifdef RPI_ENABLE
+    if (!is_eeprom_disabled) {
+        is_eeprom_disabled = !rpi_eeprom_is_valid();
+    }
+#endif // RPI_ENABLE
     return is_eeprom_disabled;
 }
 

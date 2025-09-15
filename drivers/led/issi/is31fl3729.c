@@ -40,6 +40,10 @@
 #    define IS31FL3729_GLOBAL_CURRENT 0x40
 #endif
 
+#ifndef IS31FL3729_PHASE_DELAY
+#    define IS31FL3729_PHASE_DELAY IS31FL3729_PHASE_DELAY_0_DEGREE
+#endif
+
 #ifndef IS31FL3729_SW_PULLDOWN
 #    define IS31FL3729_SW_PULLDOWN IS31FL3729_SW_PULLDOWN_2K_OHM_SW_OFF
 #endif
@@ -62,6 +66,18 @@
 
 #ifndef IS31FL3729_PWM_FREQUENCY
 #    define IS31FL3729_PWM_FREQUENCY IS31FL3729_PWM_FREQUENCY_32K_HZ
+#endif
+
+#ifndef IS31FL3729_SCALING_BLUE
+#    define IS31FL3729_SCALING_BLUE 0xff
+#endif
+
+#ifndef IS31FL3729_SCALING_GREEN
+#    define IS31FL3729_SCALING_GREEN 0xff
+#endif
+
+#ifndef IS31FL3729_SCALING_RED
+#    define IS31FL3729_SCALING_RED 0xff
 #endif
 
 const uint8_t i2c_addresses[IS31FL3729_DRIVER_COUNT] = {
@@ -107,7 +123,7 @@ void is31fl3729_write_pwm_buffer(uint8_t index) {
     // Transmit PWM registers in 11 transfers of 13 bytes.
 
     // Iterate over the pwm_buffer contents at 13 byte intervals.
-    for (uint8_t i = 0; i <= IS31FL3729_PWM_REGISTER_COUNT; i += 13) {
+    for (uint8_t i = 0; i < IS31FL3729_PWM_REGISTER_COUNT; i += 13) {
 #if IS31FL3729_I2C_PERSISTENCE > 0
         for (uint8_t j = 0; j < IS31FL3729_I2C_PERSISTENCE; j++) {
             if (i2c_write_register(i2c_addresses[index] << 1, IS31FL3729_REG_PWM + i, driver_buffers[index].pwm_buffer + i, 13, IS31FL3729_I2C_TIMEOUT) == I2C_STATUS_SUCCESS) break;
@@ -124,6 +140,9 @@ void is31fl3729_init_drivers(void) {
 #if defined(IS31FL3729_SDB_PIN)
     gpio_set_pin_output(IS31FL3729_SDB_PIN);
     gpio_write_pin_high(IS31FL3729_SDB_PIN);
+    wait_us(10);
+    gpio_write_pin_low(IS31FL3729_SDB_PIN);
+    wait_us(10);
 #endif
 
     for (uint8_t i = 0; i < IS31FL3729_DRIVER_COUNT; i++) {
@@ -131,12 +150,18 @@ void is31fl3729_init_drivers(void) {
     }
 
     for (int i = 0; i < IS31FL3729_LED_COUNT; i++) {
-        is31fl3729_set_scaling_register(i, 0xFF, 0xFF, 0xFF);
+        is31fl3729_set_scaling_register(i, IS31FL3729_SCALING_RED, IS31FL3729_SCALING_GREEN, IS31FL3729_SCALING_BLUE);
     }
 
     for (uint8_t i = 0; i < IS31FL3729_DRIVER_COUNT; i++) {
         is31fl3729_update_scaling_registers(i);
     }
+
+#if defined(IS31FL3729_SDB_PIN)
+    wait_us(10);
+    gpio_write_pin_high(IS31FL3729_SDB_PIN);
+    wait_us(10);
+#endif
 }
 
 void is31fl3729_init(uint8_t index) {
@@ -145,10 +170,15 @@ void is31fl3729_init(uint8_t index) {
     // Set up the mode and other settings, clear the PWM registers,
     // then disable software shutdown.
 
-    is31fl3729_write_register(index, IS31FL3729_REG_PULLDOWNUP, ((IS31FL3729_SW_PULLDOWN & 0b111) << 4) | (IS31FL3729_CS_PULLUP & 0b111));
+    is31fl3729_write_register(index, IS31FL3729_REG_PULLDOWNUP, ((IS31FL3729_PHASE_DELAY & 0b1) << 7) | ((IS31FL3729_SW_PULLDOWN & 0b111) << 4) | (IS31FL3729_CS_PULLUP & 0b111));
     is31fl3729_write_register(index, IS31FL3729_REG_SPREAD_SPECTRUM, ((IS31FL3729_SPREAD_SPECTRUM & 0b1) << 4) | ((IS31FL3729_SPREAD_SPECTRUM_RANGE & 0b11) << 2) | (IS31FL3729_SPREAD_SPECTRUM_CYCLE_TIME & 0b11));
     is31fl3729_write_register(index, IS31FL3729_REG_PWM_FREQUENCY, IS31FL3729_PWM_FREQUENCY);
     is31fl3729_write_register(index, IS31FL3729_REG_GLOBAL_CURRENT, IS31FL3729_GLOBAL_CURRENT);
+
+    for (int i = 0x00; i < IS31FL3729_PWM_REGISTER_COUNT; i++) {
+        is31fl3729_write_register(index, IS31FL3729_REG_PWM + i, 0x00);
+    }
+
     is31fl3729_write_register(index, IS31FL3729_REG_CONFIGURATION, IS31FL3729_CONFIGURATION);
 
     // Wait 10ms to ensure the device has woken up.
@@ -184,9 +214,9 @@ void is31fl3729_set_scaling_register(uint8_t index, uint8_t red, uint8_t green, 
     // need to do a bit of checking here since 3729 scaling is per CS pin.
     // not the usual per RGB key as per other ISSI drivers
     // only enable them, since they should be default disabled
-    int cs_red   = (led.r & 0x0F) - 1;
-    int cs_green = (led.g & 0x0F) - 1;
-    int cs_blue  = (led.b & 0x0F) - 1;
+    int cs_red   = (led.r & 0x0F);
+    int cs_green = (led.g & 0x0F);
+    int cs_blue  = (led.b & 0x0F);
 
     driver_buffers[led.driver].scaling_buffer[cs_red]   = red;
     driver_buffers[led.driver].scaling_buffer[cs_green] = green;

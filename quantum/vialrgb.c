@@ -36,7 +36,7 @@ static void get_supported(uint8_t *args, uint8_t length) {
     }
 }
 
-static uint16_t qmk_id_to_vialrgb_id(uint16_t id) {
+uint16_t qmk_id_to_vialrgb_id(uint16_t id) {
     for (size_t i = 0; i < SUPPORTED_MODES_LENGTH; ++i) {
         uint16_t qmk_id = pgm_read_word(&supported_modes[i].qmk_id);
         uint16_t vialrgb_id = pgm_read_word(&supported_modes[i].vialrgb_id);
@@ -46,7 +46,7 @@ static uint16_t qmk_id_to_vialrgb_id(uint16_t id) {
     return 0;
 }
 
-static uint16_t vialrgb_id_to_qmk_id(uint16_t id) {
+uint16_t vialrgb_id_to_qmk_id(uint16_t id) {
     for (size_t i = 0; i < SUPPORTED_MODES_LENGTH; ++i) {
         uint16_t qmk_id = pgm_read_word(&supported_modes[i].qmk_id);
         uint16_t vialrgb_id = pgm_read_word(&supported_modes[i].vialrgb_id);

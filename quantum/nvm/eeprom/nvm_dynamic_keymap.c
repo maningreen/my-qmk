@@ -8,6 +8,7 @@
 #include "nvm_dynamic_keymap.h"
 #include "nvm_eeprom_eeconfig_internal.h"
 #include "nvm_eeprom_via_internal.h"
+#include "nvm_eeprom_rpi_internal.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -17,11 +18,16 @@
 #    define NUM_ENCODERS 0
 #endif
 
-#ifdef VIA_ENABLE
-#    include "via.h"
-#    define DYNAMIC_KEYMAP_EEPROM_START (VIA_EEPROM_CONFIG_END)
+#ifdef RPI_ENABLE
+#    include "nvm_eeprom_rpi_internal.h"
+#    define DYNAMIC_KEYMAP_EEPROM_START (RPI_EEPROM_END)
 #else
-#    define DYNAMIC_KEYMAP_EEPROM_START (EECONFIG_SIZE)
+#    ifdef VIA_ENABLE
+#        include "via.h"
+#        define DYNAMIC_KEYMAP_EEPROM_START (VIA_EEPROM_CONFIG_END)
+#    else
+#        define DYNAMIC_KEYMAP_EEPROM_START (EECONFIG_SIZE)
+#    endif
 #endif
 
 #ifndef DYNAMIC_KEYMAP_EEPROM_MAX_ADDR

@@ -69,6 +69,10 @@
 #    include "process_underglow.h"
 #endif
 
+#ifdef RPI_ENABLE
+#    include "rpi.h"
+#endif
+
 #ifdef SECURE_ENABLE
 #    include "process_secure.h"
 #endif

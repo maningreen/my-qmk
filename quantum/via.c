@@ -61,6 +61,10 @@
 #include "vial.h"
 #endif
 
+#ifdef RPI_ENABLE
+#include "rpi.h"
+#endif
+
 #ifdef VIALRGB_ENABLE
 #include "vialrgb.h"
 #endif
@@ -449,6 +453,12 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
 #ifdef VIAL_ENABLE
         case id_vial_prefix: {
             vial_handle_cmd(data, length);
+            break;
+        }
+#endif
+#ifdef RPI_ENABLE
+        case id_rpi_prefix: {
+            rpi_handle_cmd(data, length);
             break;
         }
 #endif

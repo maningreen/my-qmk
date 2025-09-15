@@ -25,6 +25,9 @@ void vialrgb_get_value(uint8_t *data, uint8_t length);
 void vialrgb_set_value(uint8_t *data, uint8_t length);
 void vialrgb_save(uint8_t *data, uint8_t length);
 
+uint16_t qmk_id_to_vialrgb_id(uint16_t id);
+uint16_t vialrgb_id_to_qmk_id(uint16_t id);
+
 #if defined(VIALRGB_ENABLE) && !defined(RGB_MATRIX_ENABLE)
 #error VIALRGB_ENABLE=yes requires RGB_MATRIX_ENABLE=yes
 #endif
