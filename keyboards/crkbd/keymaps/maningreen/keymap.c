@@ -21,8 +21,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 void keyboard_post_init_user(void) {
     eeconfig_update_rgb_matrix_default();
 
-    rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_COLOR);
-    rgb_matrix_sethsv_noeeprom(HSV_WHITE);
+    rgb_matrix_mode(RGB_MATRIX_STARLIGHT_SMOOTH);
+    rgb_matrix_sethsv(HSV_WHITE);
+
+    rgb_matrix_reload_from_eeprom();
 }
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -55,9 +57,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
        KC_TAB, KC_EXLM,   KC_AT, KC_HASH,  KC_DLR, KC_PERC, _______,   _______, KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, KC_BSPC,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      _______, XXXXXXX, KC_LBRC, KC_LPRN, KC_LCBR, KC_UNDS, _______,   _______, KC_EQL,  KC_RBRC, KC_RPRN, KC_RCBR,  KC_GRV, XXXXXXX,
+      _______, XXXXXXX, KC_LCBR, KC_LPRN, KC_LBRC, KC_UNDS, _______,   _______, KC_EQL,  KC_RBRC, KC_RPRN, KC_RCBR,  XXXXXXX, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      _______, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,KC_MINUS,                      KC_PLUS, KC_PIPE, KC_TILD, XXXXXXX, XXXXXXX, XXXXXXX,
+      _______, XXXXXXX, XXXXXXX, XXXXXXX, KC_GRV,KC_MINUS,                      KC_PLUS, KC_PIPE, KC_TILD, XXXXXXX, XXXXXXX, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                           KC_LGUI,   MO(3),  KC_SPC,     KC_ENT, _______, _______
                                       //`--------------------------'  `--------------------------'
