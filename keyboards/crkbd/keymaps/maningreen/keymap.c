@@ -17,11 +17,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include QMK_KEYBOARD_H
+#include "config.h"
 
 void keyboard_post_init_user(void) {
     eeconfig_update_rgb_matrix_default();
 
-    rgb_matrix_mode(RGB_MATRIX_STARLIGHT_SMOOTH);
+    rgb_matrix_mode(RGB_MATRIX_DEFAULT_MODE );
     rgb_matrix_sethsv(HSV_WHITE);
 
     rgb_matrix_reload_from_eeprom();
